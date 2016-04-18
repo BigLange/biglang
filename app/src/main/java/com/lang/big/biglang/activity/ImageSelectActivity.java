@@ -11,7 +11,10 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 import com.lang.big.biglang.Adapter.ImageSlectAdapter;
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.FolderBean;
+import com.lang.big.biglang.popupwindow.SelectImgDirPopupWindow;
 import com.lang.big.biglang.utils.MyFileNameFileter;
 import com.lang.big.biglang.utils.MyThreadPool;
 
@@ -32,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public class ImageSelectActivity extends Activity implements Runnable{
+public class ImageSelectActivity extends Activity implements Runnable {
 
     private GridView mGridView;
     private ImageSlectAdapter imgAdapter;
@@ -51,32 +55,73 @@ public class ImageSelectActivity extends Activity implements Runnable{
 
     private ExecutorService pool;
 
-    private Handler mHandler = new Handler(){
+    private SelectImgDirPopupWindow sidPop;
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             //这里接受到信息后，的处理
             mProgressDialog.dismiss();
             //绑定数据到View中去
             data2View();
-            if (currentDir!=null) {
-                imgAdapter = new ImageSlectAdapter(ImageSelectActivity.this, R.layout.iamge_select_grid_item_moban
-                        , mImgs, currentDir.getAbsolutePath());
-            }
+            initPopupWindow();
 
-            mGridView.setAdapter(imgAdapter);
-
-            mDirCount.setText(mMaxCount + "");
-            mDirName.setText(currentDir.getName());
         }
     };
 
+    private void initPopupWindow() {
+        sidPop = new SelectImgDirPopupWindow(ImageSelectActivity.this,mFolderBeans);
+        sidPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                //当popupwindow消失的时候，设置屏幕蒙版消失
+                lightOn();
+            }
+        });
+        sidPop.setMListView(new SelectImgDirPopupWindow.OnDirPopupWinowListener() {
+            @Override
+            public void onSeleed(FolderBean folderBean) {
+                currentDir = new File(folderBean.getDirPath());
+                mImgs = Arrays.asList(currentDir.list(new MyFileNameFileter()));
+                imgAdapter = new ImageSlectAdapter(ImageSelectActivity.this,R.layout.iamge_select_grid_item_moban,
+                        mImgs,currentDir.getAbsolutePath());
+                mGridView.setAdapter(imgAdapter);
+
+                mDirCount.setText(mImgs.size()+"");
+                mDirName.setText(folderBean.getName());
+                sidPop.dismiss();
+            }
+        });
+    }
+
+    //下面的菜单去掉的时候，界面变亮
+    private void lightOn() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 1.0f;
+        getWindow().setAttributes(lp);
+    }
+
+    //下面的菜单弹出来的时候，界面变暗
+    private void lightOff() {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = 0.3f;
+        getWindow().setAttributes(lp);
+    }
+
     private void data2View() {
-        if(currentDir==null){
+        if (currentDir == null) {
             Toast.makeText(ImageSelectActivity.this, "未扫描的任何图片", Toast.LENGTH_SHORT).show();
             return;
         }
-        System.out.println(currentDir);
+//        System.out.println(currentDir);
         mImgs = Arrays.asList(currentDir.list(new MyFileNameFileter()));
+        imgAdapter = new ImageSlectAdapter(ImageSelectActivity.this, R.layout.iamge_select_grid_item_moban
+                , mImgs, currentDir.getAbsolutePath());
+
+        mGridView.setAdapter(imgAdapter);
+
+        mDirCount.setText(mMaxCount + "");
+        mDirName.setText(currentDir.getName());
     }
 
     @Override
@@ -90,28 +135,40 @@ public class ImageSelectActivity extends Activity implements Runnable{
     }
 
     private void initView() {
-        mGridView = (GridView)findViewById(R.id.img_select_main_grid);
-        mButton = (RelativeLayout)findViewById(R.id.img_select_bottom_layout);
-        mDirName = (TextView)findViewById(R.id.img_select_wenjianjia);
-        mDirCount = (TextView)findViewById(R.id.img_select_number);
+        mGridView = (GridView) findViewById(R.id.img_select_main_grid);
+        mButton = (RelativeLayout) findViewById(R.id.img_select_bottom_layout);
+        mDirName = (TextView) findViewById(R.id.img_select_wenjianjia);
+        mDirCount = (TextView) findViewById(R.id.img_select_number);
     }
 
-    private void initDatas(){
+    private void initDatas() {
         //遍历所有的图片
-        if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(ImageSelectActivity.this, "当前存储卡不可用", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(pool==null){
+        if (pool == null) {
             pool = MyThreadPool.getMyThreadPool().getPool();
         }
-        mProgressDialog = ProgressDialog.show(this,null,"正在加载...");
+        mProgressDialog = ProgressDialog.show(this, null, "正在加载...");
         pool.submit(this);
     }
 
-    private void initEvent(){
+    private void initEvent() {
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //设置动画
+                sidPop.setAnimationStyle(R.style.dir_popupwindow_anim);
+                //设置SelectImgDirPopupWindow显示在mButton的正上方
+                sidPop.showAsDropDown(mButton, 0, 0);
+                //设置内容区域变黑
+                lightOff();
+            }
+        });
 
     }
+
 
     @Override
     public void run() {
@@ -125,33 +182,33 @@ public class ImageSelectActivity extends Activity implements Runnable{
         Cursor cursor = cr.query(uri, null,
                 MediaStore.Images.Media.MIME_TYPE + "=? or "
                         + MediaStore.Images.Media.MIME_TYPE + "=?",
-                new String[] { "image/jpeg", "image/png" },
+                new String[]{"image/jpeg", "image/png"},
                 MediaStore.Images.Media.DATE_MODIFIED);
 
         Set<String> mDirPaths = new HashSet<>();
 
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
 
             //获得这张图片地址的父目录的file对象
             File parenFile = new File(path).getParentFile();
 
-            if(parenFile==null){
+            if (parenFile == null) {
                 continue;
             }
             String dirPath = parenFile.getAbsolutePath();
             FolderBean folderBean = null;
 
-            if(mDirPaths.contains(dirPath)){
+            if (mDirPaths.contains(dirPath)) {
                 continue;
-            }else {
+            } else {
                 mDirPaths.add(dirPath);
                 folderBean = new FolderBean();
                 folderBean.setDirPath(dirPath);
                 folderBean.setFirstImgPath(path);
             }
 
-            if(parenFile.list()==null)
+            if (parenFile.list() == null)
                 continue;
 
             int picSize = parenFile.list(new MyFileNameFileter()).length;
@@ -160,7 +217,7 @@ public class ImageSelectActivity extends Activity implements Runnable{
             mFolderBeans.add(folderBean);
 
             //最开始显示的那个文件夹里面相片。这里设置为最多的显示
-            if (picSize>mMaxCount){
+            if (picSize > mMaxCount) {
                 mMaxCount = picSize;
                 currentDir = parenFile;
             }

@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="#ee000000"
+        android:background="#e0000000"
         android:clickable="true">
 
 

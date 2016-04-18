@@ -1,5 +1,6 @@
 package com.lang.big.biglang.popupwindow;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.DisplayMetrics;
@@ -8,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.FolderBean;
+import com.lang.big.biglang.utils.ImageLoad;
 
 import java.util.List;
 
@@ -31,6 +34,12 @@ public class SelectImgDirPopupWindow extends PopupWindow {
     private ListView mListView;
 
     private List<FolderBean> mDatas;
+
+    public interface OnDirPopupWinowListener{
+        void onSeleed(FolderBean folderBean);
+    }
+
+    public OnDirPopupWinowListener mListener;
 
     public SelectImgDirPopupWindow(Context context,List<FolderBean> datas){
         mDatas = datas;
@@ -61,16 +70,29 @@ public class SelectImgDirPopupWindow extends PopupWindow {
             }
         });
 
-        initViews();
+        initViews(context);
         initEvent();
     }
 
-    private void initEvent() {
-
+    public void setMListView(OnDirPopupWinowListener mListener){
+        this.mListener = mListener;
     }
 
-    private void initViews() {
+    private void initEvent() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mListener!=null) {
+                    FolderBean mBean = mDatas.get(position);
+                    mListener.onSeleed(mBean);
+                }
+            }
+        });
+    }
+
+    private void initViews(Context context) {
         mListView = (ListView)mConvertView.findViewById(R.id.select_img_popup_mian_list);
+        mListView.setAdapter(new ListDirAdapter(context,mDatas));
     }
 
     //计算popupwindow的宽度和高度
@@ -101,11 +123,19 @@ public class SelectImgDirPopupWindow extends PopupWindow {
             if(convertView==null){
                 convertView = mInflater.inflate(R.layout.select_img_popup_item_moban,parent,false);
                 mHolder = new ViewHolder();
+                mHolder.mImg = (ImageView)convertView.findViewById(R.id.select_img_popup_item_img);
+                mHolder.mDirName = (TextView)convertView.findViewById(R.id.select_img_item_dir_name_txt);
+                mHolder.mDirCount = (TextView)convertView.findViewById(R.id.select_img_item_imt_count_txt);
+                convertView.setTag(mHolder);
             }else{
                 mHolder = (ViewHolder)convertView.getTag();
             }
+            mHolder.mDirCount.setText(mBean.getCount()+"");
+            mHolder.mDirName.setText(mBean.getName());
+            mHolder.mImg.setImageResource(R.drawable.pictures_no);
 
-            return super.getView(position, convertView, parent);
+            ImageLoad.getImageLoad().loadImage(mBean.getFirstImgPath(),mHolder.mImg);
+            return convertView;
         }
 
         private class ViewHolder{
