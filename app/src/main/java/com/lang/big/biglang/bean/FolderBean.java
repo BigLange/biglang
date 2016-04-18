@@ -36,4 +36,8 @@ public class FolderBean {
     public void setCount(int count) {
         this.count = count;
     }
+
+    public String getName() {
+        return name;
+    }
 }
