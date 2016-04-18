@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lang.big.biglang.activity.homepage">
+
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/set_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-18dp"
+            android:layout_weight="1">
+            <!--<Button-->
+                <!--android:background="@drawable/btn_selector"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="selector测试"/>-->
+        </FrameLayout>
+
+        <include layout="@layout/homepage_botton"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_select_img_fg"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#30000000">
+
+        <LinearLayout
+            android:id="@+id/layout_select_img_bs"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true"
+            android:background="#fff"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_album"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="20dp"
+                android:gravity="center"
+                android:text="相册"
+                android:textColor="#fff"
+                android:background="@drawable/iamge_select_red"/>
+
+            <Button
+                android:id="@+id/btn_cim"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="相机"
+                android:textColor="#fff"
+                android:background="@drawable/iamge_select_red"/>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

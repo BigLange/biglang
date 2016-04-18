@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/index_shopfujin_show"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="100dp"
+        android:src="@drawable/yxy"
+        android:layout_height="100dp" />
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/index_shopfujin_jieshao"
+            android:text="大家好,大家好,大家好,大家好大家好大家好"
+            android:textSize="16sp"
+            android:textColor="#000"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.lang.big.biglang.MyView.CircleView
+                android:id="@+id/index_shopfujin_touxiang"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+            <TextView
+                android:id="@+id/index_shopfujin_uname"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:padding="3dp"
+                android:text="用户名称"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/index_shopfujin_xianjia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FA5229"
+                android:text="￥90"/>
+            <TextView
+                android:id="@+id/index_shopfujin_yuanjia"
+                android:text="￥1000"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/index_shopfujin_address"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="广东|东莞"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

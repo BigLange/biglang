@@ -1,0 +1,75 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lang.big.biglang.fragment.MreleFragment1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/mrele_fragment1_edt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="起个名字吧..."
+            android:padding="15dp" />
+
+        <GridView
+            android:id="@+id/mrele_fragment1_grid_show_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="4"
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignParentStart="true">
+
+        </GridView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="点击图片可以进行编辑..."
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:gravity="center"
+            android:id="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="50dp" />
+
+        <Button
+            android:id="@+id/mrele_fragment1_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:background="#dadada"
+            android:text="下一步"/>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/mrele_fragment1_add_img_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="#30000000">
+
+            <ListView
+                android:divider="#f9f9f9"
+                android:dividerHeight="1dp"
+                android:id="@+id/mrele_fragment1_add_img_options"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_alignParentBottom="true">
+
+            </ListView>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

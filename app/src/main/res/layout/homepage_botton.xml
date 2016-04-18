@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="-18dp"
+    android:background="@null">
+
+    <LinearLayout
+        android:id="@+id/layout_botton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/hg_bot_top_solid"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/id_btn_hg"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:text="主页"
+            android:textColor="#333" />
+
+        <Button
+            android:id="@+id/id_btn_classification"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:text="分类"
+            android:textColor="#333" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000" />
+
+        <Button
+            android:id="@+id/id_btn_dope"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="消息"
+            android:textColor="#333" />
+
+        <Button
+            android:id="@+id/id_btn_release"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:gravity="center"
+            android:text="发布"
+            android:textColor="#333" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/add_this_shop"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="3dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            android:src="@drawable/add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发布" />
+    </LinearLayout>
+
+
+</RelativeLayout>
