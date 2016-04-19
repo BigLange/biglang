@@ -53,7 +53,7 @@
                 android:gravity="center"
                 android:text="相册"
                 android:textColor="#fff"
-                android:background="@drawable/iamge_select_red"/>
+                android:background="@drawable/iamge_select_blue"/>
 
             <Button
                 android:id="@+id/btn_cim"

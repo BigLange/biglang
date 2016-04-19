@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.utils.MyThreadPool;
+
+import java.util.concurrent.ExecutorService;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
@@ -40,7 +43,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onResume() {
         super.onResume();
-        new Thread(){
+        ExecutorService pool = MyThreadPool.getMyThreadPool().getPool();
+        pool.submit(new Runnable() {
             @Override
             public void run() {
                 while (num>0) {
@@ -54,7 +58,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 }
                 mHandler.sendEmptyMessage(2);
             }
-        }.start();
+        });
     }
 
     @Override

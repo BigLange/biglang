@@ -3,6 +3,7 @@ package com.lang.big.biglang.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.activity.ImageSelectActivity;
 import com.lang.big.biglang.utils.ImageLoad;
 
 import java.nio.charset.spi.CharsetProvider;
@@ -24,16 +26,18 @@ import java.util.Set;
  */
 public class ImageSlectAdapter extends BaseAdapter {
 
-    private Context context;
     private int resouce;
     private List<String> mDatas;
     private String dirPath;
+    private ImageSelectActivity mActivity;
 
-    private Set<Integer> positions = new HashSet<>();
+    private  HashSet<String> positions = new HashSet<>();
 
 
     public ImageSlectAdapter(Context context,int resouce,List<String> mDatas,String dirPath){
-        this.context = context;
+        if (context instanceof ImageSelectActivity){
+            mActivity = (ImageSelectActivity)context;
+        }
         this.resouce = resouce;
         //图片名称
         this.mDatas = mDatas;
@@ -60,8 +64,9 @@ public class ImageSlectAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder mHolder = null;
         MyClick mClick = null;
+        String filePath = dirPath + "/" + getItem(position);
         if(convertView==null){
-            convertView = LayoutInflater.from(context).inflate(resouce,parent,false);
+            convertView = LayoutInflater.from(mActivity).inflate(resouce,parent,false);
             mHolder = new ViewHolder();
             mClick = new MyClick();
             mHolder.mImg = (ImageView)convertView.findViewById(R.id.img_select_grid_item_img);
@@ -80,15 +85,17 @@ public class ImageSlectAdapter extends BaseAdapter {
         mHolder.mImg.setColorFilter(null);
 
         //这句话就让图片加载了
-        ImageLoad.getImageLoad().loadImage(dirPath + "/" + getItem(position), mHolder.mImg);
-        mClick.setPosition(position,mHolder.mImg,mHolder.mSelect);
-        if(positions.contains(position)){
-            positions.add(position);
+        ImageLoad.getImageLoad().loadImage(filePath, mHolder.mImg);
+        mClick.setPosition(filePath,mHolder.mImg,mHolder.mSelect);
+        if(positions.contains(filePath)){
             mHolder.mImg.setColorFilter(Color.parseColor("#90000000"));
             mHolder.mSelect.setImageResource(R.drawable.pictures_selected);
-
         }
         return convertView;
+    }
+
+    public HashSet<String> getDriPaths(){
+        return positions;
     }
 
 
@@ -97,27 +104,43 @@ public class ImageSlectAdapter extends BaseAdapter {
         ImageButton mSelect;
     }
     class MyClick implements View.OnClickListener{
-        int position;
+        String filePath;
         ImageView mImg;
         ImageButton mSelect;
+        Button mConmmitBtn;
 
-        public void setPosition(int position,ImageView mImg,ImageButton mSelect){
-            this.position = position;
+        public void setPosition(String filePath,ImageView mImg,ImageButton mSelect){
+            this.filePath = filePath;
             this.mImg = mImg;
             this.mSelect = mSelect;
+            mConmmitBtn = mActivity.getmConmmitBtn();
         }
+
 
 
         @Override
         public void onClick(View v) {
-            if(positions.contains(position)){
-                positions.remove(position);
+            int size = positions.size();
+            if(positions.contains(filePath)){
+                if(size==1){
+                    mActivity.setmConmmitBtnShowToHide(false);
+                    mActivity.setmDirCountShowToHide(true);
+                }
+                positions.remove(filePath);
                 mImg.setColorFilter(null);
                 mSelect.setImageResource(R.drawable.picture_unselected);
             }else{
-                positions.add(position);
+                if(size<1){
+                    mActivity.setmConmmitBtnShowToHide(true);
+                    mActivity.setmDirCountShowToHide(false);
+                }
+                positions.add(filePath);
                 mImg.setColorFilter(Color.parseColor("#90000000"));
                 mSelect.setImageResource(R.drawable.pictures_selected);
+            }
+            size = positions.size();
+            if(size>0){
+                mConmmitBtn.setText(size+" 张图片被选取");
             }
         }
     }

@@ -12,9 +12,11 @@
         android:layout_height="wrap_content"
         android:text="秒后跳转,点击马上进入"
         android:background="@drawable/index_botton"
-        android:layout_marginBottom="120dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:minHeight="0dp"
+        android:padding="10dp"
+        android:textSize="12dp"/>
 </RelativeLayout>

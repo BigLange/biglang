@@ -3,7 +3,7 @@
     package="com.lang.big.biglang" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -21,7 +21,7 @@
         </activity>
         <activity android:name=".activity.homepage" >
         </activity>
-        <activity android:name=".activity.MReleaseActivity" >
+        <activity android:name=".activity.MReleaseActivity" android:windowSoftInputMode="stateHidden">
         </activity>
         <activity android:name=".activity.ImageSelectActivity" >
         </activity>

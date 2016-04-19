@@ -3,6 +3,7 @@ package com.lang.big.biglang.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
@@ -36,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public class ImageSelectActivity extends Activity implements Runnable {
+public class ImageSelectActivity extends Activity implements Runnable,View.OnClickListener {
 
     private GridView mGridView;
     private ImageSlectAdapter imgAdapter;
@@ -44,6 +46,7 @@ public class ImageSelectActivity extends Activity implements Runnable {
     private RelativeLayout mButton;
     private TextView mDirName;
     private TextView mDirCount;
+    private Button mConmmitBtn;
 
 
     private File currentDir;
@@ -139,6 +142,7 @@ public class ImageSelectActivity extends Activity implements Runnable {
         mButton = (RelativeLayout) findViewById(R.id.img_select_bottom_layout);
         mDirName = (TextView) findViewById(R.id.img_select_wenjianjia);
         mDirCount = (TextView) findViewById(R.id.img_select_number);
+        mConmmitBtn = (Button)findViewById(R.id.img_select_commit_btn);
     }
 
     private void initDatas() {
@@ -155,18 +159,8 @@ public class ImageSelectActivity extends Activity implements Runnable {
     }
 
     private void initEvent() {
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //设置动画
-                sidPop.setAnimationStyle(R.style.dir_popupwindow_anim);
-                //设置SelectImgDirPopupWindow显示在mButton的正上方
-                sidPop.showAsDropDown(mButton, 0, 0);
-                //设置内容区域变黑
-                lightOff();
-            }
-        });
-
+        mButton.setOnClickListener(this);
+        mConmmitBtn.setOnClickListener(this);
     }
 
 
@@ -223,11 +217,58 @@ public class ImageSelectActivity extends Activity implements Runnable {
             }
         }
         cursor.close();
-        mDirPaths.clear();
 
         //通知扫描结束
         mHandler.sendEmptyMessage(0x110);
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.img_select_bottom_layout:
+                //设置动画
+                sidPop.setAnimationStyle(R.style.dir_popupwindow_anim);
+                //设置SelectImgDirPopupWindow显示在mButton的正上方
+                sidPop.showAsDropDown(mButton, 0, 0);
+                //设置内容区域变黑
+                lightOff();
+                break;
+            case R.id.img_select_commit_btn:
+                HashSet<String> dirPaths = imgAdapter.getDriPaths();
+                if(dirPaths.size()<17) {
+                    Intent intent = new Intent();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("dirPaths", dirPaths);
+                    intent.putExtras(bundle);
+                    setResult(RESULT_OK, intent);
+                    this.finish();
+                }else{
+                    Toast.makeText(ImageSelectActivity.this, "选取图片多于16张", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setmDirCountShowToHide(boolean show){
+        if(show){
+            mDirCount.setVisibility(View.VISIBLE);
+        }else{
+            mDirCount.setVisibility(View.GONE);
+        }
+    }
+
+    public void setmConmmitBtnShowToHide(boolean show){
+        if(show){
+            mConmmitBtn.setVisibility(View.VISIBLE);
+        }else{
+            mConmmitBtn.setVisibility(View.GONE);
+        }
+    }
+
+    public Button getmConmmitBtn(){
+        return mConmmitBtn;
+    }
 }

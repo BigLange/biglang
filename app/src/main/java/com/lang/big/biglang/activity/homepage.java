@@ -1,7 +1,10 @@
 package com.lang.big.biglang.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lang.big.biglang.R;
@@ -18,7 +22,12 @@ import com.lang.big.biglang.fragment.MessagesFragment;
 import com.lang.big.biglang.fragment.ReleaseFragment;
 import com.lang.big.biglang.utils.MyAnimation;
 
-public class homepage extends FragmentActivity implements View.OnClickListener{
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class homepage extends FragmentActivity implements View.OnClickListener {
 
     private Button btn_hg;
     private Button btn_classification;
@@ -77,13 +86,13 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
     }
 
     private void intoView() {
-        btn_hg = (Button)findViewById(R.id.id_btn_hg);
-        btn_classification = (Button)findViewById(R.id.id_btn_classification);
-        btn_dope = (Button)findViewById(R.id.id_btn_dope);
-        btn_release = (Button)findViewById(R.id.id_btn_release);
-        btn_album = (Button)findViewById(R.id.btn_album);
-        btn_cim = (Button)findViewById(R.id.btn_cim);
-        imgb_add_shop = (ImageButton)findViewById(R.id.add_this_shop);
+        btn_hg = (Button) findViewById(R.id.id_btn_hg);
+        btn_classification = (Button) findViewById(R.id.id_btn_classification);
+        btn_dope = (Button) findViewById(R.id.id_btn_dope);
+        btn_release = (Button) findViewById(R.id.id_btn_release);
+        btn_album = (Button) findViewById(R.id.btn_album);
+        btn_cim = (Button) findViewById(R.id.btn_cim);
+        imgb_add_shop = (ImageButton) findViewById(R.id.add_this_shop);
 
         currentClickBtn = btn_hg;
         currentClickBtn.setTextColor(0xffff9c00);
@@ -96,15 +105,15 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.id_btn_hg:
                 mFTransaction = mFManaage.beginTransaction();
-                if(currentFragment!=fragment_hg) {
+                if (currentFragment != fragment_hg) {
                     fragmentShowToHide(v, fragment_hg);
                 }
                 break;
             case R.id.id_btn_classification:
-                if(currentFragment!=fragment_canss) {
+                if (currentFragment != fragment_canss) {
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_canss == null) {
                         fragment_canss = new CassificationFragment();
@@ -114,7 +123,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
                 }
                 break;
             case R.id.id_btn_dope:
-                if(currentFragment!=fragment_message) {
+                if (currentFragment != fragment_message) {
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_message == null) {
                         fragment_message = new MessagesFragment();
@@ -124,7 +133,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
                 }
                 break;
             case R.id.id_btn_release:
-                if(currentFragment!=fragment_relese) {
+                if (currentFragment != fragment_relese) {
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_relese == null) {
                         fragment_relese = new ReleaseFragment();
@@ -147,18 +156,24 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
 
 
     private void getImage(int i) {
-        if(i==1){
+        int code = 0;
+        if (i == 1) {
             btn_album.setBackgroundResource(R.drawable.iamge_select_blue);
             btn_cim.setBackgroundResource(R.drawable.iamge_select_red);
-            Intent intent = new Intent(this,ImageSelectActivity.class);
-            startActivity(intent);
-        }else{
+            code = 2;
+        } else {
             btn_cim.setBackgroundResource(R.drawable.iamge_select_blue);
             btn_album.setBackgroundResource(R.drawable.iamge_select_red);
+            code = 1;
         }
+        Intent intent = new Intent(this, MReleaseActivity.class);
+        intent.putExtra("intent",code);
+        startActivity(intent);
+        hideOption();
     }
 
     private MyAnimation mAnimation;
+
     private void ejectOption() {
         isSelectImg = true;
         layout_select_img_fg.setVisibility(View.VISIBLE);
@@ -171,17 +186,17 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
     }
 
     private void setViewTranslate() {
-        mAnimation.setViewTranslate(1000,true,0,0,100,0,layout_select_img_bs);
-        mAnimation.setViewTranslate(1000,true,0,0,10,0,btn_album);
-        mAnimation.setViewTranslate(1000, true, 0, 0,10,0,btn_cim);
+        mAnimation.setViewTranslate(1000, true, 0, 0, 100, 0, layout_select_img_bs);
+        mAnimation.setViewTranslate(1000, true, 0, 0, 10, 0, btn_album);
+        mAnimation.setViewTranslate(1000, true, 0, 0, 10, 0, btn_cim);
     }
 
     private void setLayoutAlpha() {
-        mAnimation.setLayoutAlpha(1000,true,0f,1f,layout_select_img_fg);
+        mAnimation.setLayoutAlpha(1000, true, 0f, 1f, layout_select_img_fg);
     }
 
-    private void fragmentShowToHide(View v,Fragment mFragemnt){
-        Button btn = (Button)v;
+    private void fragmentShowToHide(View v, Fragment mFragemnt) {
+        Button btn = (Button) v;
         resetBtnTextColor();
         btn.setTextColor(0xffff9c00);
         btn.setBackgroundColor(0xfbfbfbf);
@@ -201,16 +216,20 @@ public class homepage extends FragmentActivity implements View.OnClickListener{
 
     @Override
     public void onBackPressed() {
-        if(isSelectImg){
-//            layout_select_img_bs.clearAnimation();
-            layout_select_img_fg.clearAnimation();
-//            btn_album.clearAnimation();
-//            btn_cim.clearAnimation();
-            layout_select_img_fg.setVisibility(View.GONE);
-//            Toast.makeText(homepage.this,(layout_select_img_fg.getVisibility()==View.GONE)+"", Toast.LENGTH_SHORT).show();
-            isSelectImg = false;
-        }else {
+        if (isSelectImg) {
+            hideOption();
+        } else {
             super.onBackPressed();
         }
+    }
+
+    private void hideOption(){
+        //            layout_select_img_bs.clearAnimation();
+        layout_select_img_fg.clearAnimation();
+//            btn_album.clearAnimation();
+//            btn_cim.clearAnimation();
+        layout_select_img_fg.setVisibility(View.GONE);
+//            Toast.makeText(homepage.this,(layout_select_img_fg.getVisibility()==View.GONE)+"", Toast.LENGTH_SHORT).show();
+        isSelectImg = false;
     }
 }

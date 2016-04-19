@@ -17,6 +17,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.activity.ImageSelectActivity;
 import com.lang.big.biglang.bean.FolderBean;
 import com.lang.big.biglang.utils.ImageLoad;
 
@@ -44,7 +45,6 @@ public class SelectImgDirPopupWindow extends PopupWindow {
     public SelectImgDirPopupWindow(Context context,List<FolderBean> datas){
         mDatas = datas;
         caiWidthAndHeight(context);
-
         mConvertView = LayoutInflater.from(context).inflate(R.layout.select_img_popup_mian,null);
 
         setContentView(mConvertView);
@@ -88,6 +88,8 @@ public class SelectImgDirPopupWindow extends PopupWindow {
                 }
             }
         });
+
+
     }
 
     private void initViews(Context context) {
