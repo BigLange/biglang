@@ -86,6 +86,7 @@ public class ImageSlectAdapter extends BaseAdapter {
             positions.add(position);
             mHolder.mImg.setColorFilter(Color.parseColor("#90000000"));
             mHolder.mSelect.setImageResource(R.drawable.pictures_selected);
+
         }
         return convertView;
     }
