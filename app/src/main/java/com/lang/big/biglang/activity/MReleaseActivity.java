@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 
@@ -31,7 +32,9 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
     private FragmentManager mFManager;
     private FragmentTransaction mFTransaction;
 
-    private HashSet<String> mDirPaths = new HashSet<>();
+    private ArrayList<String> mDirPaths = new ArrayList<>();
+
+    private HashSet<String> mShujuhuanchon = new HashSet<>();
 
     //记录当前应该在线程中改变第几个头部的进度条
     private int number = 1;
@@ -47,6 +50,8 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
     private final int CAPTURECODE = 111;
     //进入相册请求码
     private final int ALBUMCODE = 222;
+
+    private final int IMGPRE = 333;
 
     //这个属性记录这个页面第一个添加图片的fragment的一个自定义的菜单弹出的状态，判断，如果是弹出的状态的话，那么back的时候 ，就需要先处理这个状态
     public boolean isAddImgstae;
@@ -92,7 +97,7 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
         //获取当前的管理对象
         mFManager = getFragmentManager();
         mFTransaction = mFManager.beginTransaction();
-        mFTransaction.add(R.id.mrele_frag_layout,addimgFragment);
+        mFTransaction.add(R.id.mrele_frag_layout, addimgFragment);
         mFTransaction.commit();
     }
 
@@ -115,6 +120,19 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
             @Override
             public void nextFragment() {
                 numberadd();
+            }
+        });
+
+        addimgFragment.setStartImgPreListener(new MreleFragment1.StartImgPreListener() {
+            @Override
+            public void startImgPre(int index) {
+                Intent intent = new Intent(MReleaseActivity.this, ImagePreview.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("dirPaths", mDirPaths);
+                bundle.putInt("index", index);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, IMGPRE);
+                overridePendingTransition(R.anim.img_pre_start,R.anim.img_pre_close);
             }
         });
     }
@@ -182,7 +200,12 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
             }else if(requestCode == ALBUMCODE){
                 Bundle bundle = data.getExtras();
                 HashSet<String> albumPath = (HashSet<String>)bundle.getSerializable("dirPaths");
-                mDirPaths.addAll(albumPath);
+                mShujuhuanchon.addAll(albumPath);
+                mDirPaths.clear();
+                mDirPaths.addAll(mShujuhuanchon);
+            }else if(requestCode == IMGPRE){
+                int index = data.getIntExtra("index",-1);
+               mShujuhuanchon.remove(mDirPaths.remove(index));
             }
             addimgFragment.setmDatas(mDirPaths);
         }
@@ -214,5 +237,6 @@ public class MReleaseActivity extends FragmentActivity implements Runnable{
             }
         }
         mDirPaths.add(imgFile.getAbsolutePath());
+        mShujuhuanchon.add(imgFile.getAbsolutePath());
     }
 }

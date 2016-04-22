@@ -2,6 +2,7 @@ package com.lang.big.biglang.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,12 +21,14 @@ import com.lang.big.biglang.R;
 import com.lang.big.biglang.activity.MReleaseActivity;
 import com.lang.big.biglang.utils.MyAnimation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MreleFragment1 extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener,Mrelefrag1ImgGridAdapter.OnAddImgBtnClickListener{
+public class MreleFragment1 extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener,
+        Mrelefrag1ImgGridAdapter.OnAddImgBtnClickListener{
 
     private View addImgLayout;
     private ListView addImgList;
@@ -40,7 +43,8 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
 
     private Mrelefrag1ImgGridAdapter m1igada;
 
-    private HashSet<String> mDatas = new HashSet<>();
+    private ArrayList<String> mDatas = new ArrayList<>();
+
 
 
     public MreleFragment1() {
@@ -48,15 +52,33 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
     }
 
 
-    public void setmDatas(HashSet<String> mDatas) {
+    public void setmDatas(ArrayList<String> mDatas) {
         this.mDatas = mDatas;
         gridViewSetAdapter();
+    }
+
+    public interface StartImgPreListener{
+        void startImgPre(int index);
+    }
+
+    private StartImgPreListener startImgPreListener;
+
+    public void setStartImgPreListener(StartImgPreListener startImgPreListener) {
+        this.startImgPreListener = startImgPreListener;
     }
 
     private void gridViewSetAdapter(){
         m1igada = new Mrelefrag1ImgGridAdapter(getActivity(),mDatas);
         m1igada.setOnAddImgClickListener(this);
         showImgGrid.setAdapter(m1igada);
+        showImgGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (startImgPreListener!=null){
+                    startImgPreListener.startImgPre(position);
+                }
+            }
+        });
     }
 
     @Override

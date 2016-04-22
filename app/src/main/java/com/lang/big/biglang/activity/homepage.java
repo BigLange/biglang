@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -16,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.bean.ShopClass2;
 import com.lang.big.biglang.fragment.CassificationFragment;
 import com.lang.big.biglang.fragment.HgFragment;
+import com.lang.big.biglang.fragment.IngLoadFragment;
 import com.lang.big.biglang.fragment.MessagesFragment;
 import com.lang.big.biglang.fragment.ReleaseFragment;
 import com.lang.big.biglang.utils.MyAnimation;
@@ -37,6 +41,22 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     private Button btn_album;
     private Button btn_cim;
 
+    //加载成功
+    public final static int LOADED = 112;
+    //正在加载
+    public final static int BEGING_LOADED = 111;
+    //加载失败(算是网络异常)
+    public final static int FAILED_TO_LOAD = 110;
+    //还没有加载(没有点击到那个上面去)
+    public final static int NO_LOAD = 109;
+
+    //代表着正在加载商品分类的fragment的代码
+    public final static int MSGFRAGMENTLOAD = 1112;
+    //...
+    public final static int CASSFRAGMENTLOAD = 1111;
+    public final static int RELEFRAGMENTLOAD = 1113;
+
+
     private Button currentClickBtn;
 
     private View layout_select_img_fg;
@@ -46,6 +66,18 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     private CassificationFragment fragment_canss;
     private MessagesFragment fragment_message;
     private ReleaseFragment fragment_relese;
+    private IngLoadFragment ingLoadFragment;
+
+
+    //第二个商品分类fragment的状态
+    private int cass_fragment_state = NO_LOAD;
+    //第三个购物消息fragment的状态
+    private int msg_fragment_state = NO_LOAD;
+    //第四个用户个人信息的fragment状态
+    private int rele_fragment_state = NO_LOAD;
+
+
+    private ShopClass2 shopClass2;
 
 
     private Fragment currentFragment;
@@ -54,6 +86,40 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     private FragmentTransaction mFTransaction;
 
     private boolean isSelectImg;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what==LOADED){
+                //判断，返回来的是数据加载完毕
+                switch (msg.arg1){
+                    case CASSFRAGMENTLOAD:
+                        //如果当前是商品分类的fragment加载完成了的话，就进行对应的操作
+                        fragment_canssLoad();
+                        break;
+                    case MSGFRAGMENTLOAD:
+                        //...
+                        break;
+                    case RELEFRAGMENTLOAD:
+                        break;
+                }
+
+            }else if(msg.what==FAILED_TO_LOAD){
+                //或者是数据加载异常
+                switch (msg.arg1){
+                    case CASSFRAGMENTLOAD:
+                        Toast.makeText(homepage.this, "出异常啦", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MSGFRAGMENTLOAD:
+                        //...
+                        break;
+                    case RELEFRAGMENTLOAD:
+                        break;
+                }
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +132,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
 
     private void intoFragment() {
         mFManaage = getSupportFragmentManager();
-        mFTransaction = mFManaage.beginTransaction();
-        fragment_hg = new HgFragment();
-        //加载主界面
-        mFTransaction.add(R.id.set_fragment, fragment_hg);
-        mFTransaction.commit();
-        currentFragment = fragment_hg;
+        fragment_hgLoad();
     }
 
     private void intoEvent() {
@@ -108,38 +169,56 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.id_btn_hg:
                 mFTransaction = mFManaage.beginTransaction();
-                if (currentFragment != fragment_hg) {
-                    fragmentShowToHide(v, fragment_hg);
+                if(v!=currentClickBtn){
+                    bottonBtnClickChangeStyle(v);
+                    if(fragment_hg !=null) {
+                        fragmentShowToHide(fragment_hg);
+                    }
                 }
                 break;
             case R.id.id_btn_classification:
-                if (currentFragment != fragment_canss) {
+                if (v != currentClickBtn) {
+                    //判断如果按的按钮没有重复的话，那么就进行切换的操作
+                    bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
-                    if (fragment_canss == null) {
-                        fragment_canss = new CassificationFragment();
-                        mFTransaction.add(R.id.set_fragment, fragment_canss);
+                    if(cass_fragment_state==BEGING_LOADED){
+                        //判断如果现在fragment的状态属于属于正在加载的话
+                       setingLoadFragmentIsShow();
+                    }else if(cass_fragment_state==NO_LOAD){
+                        //判断当前页面如果还没有加载过的话就让其数据去进行加载，并且让加载页面显示出来
+                        shopClass2 = ShopClass2.getShopClass2(this,mHandler);
+                        cass_fragment_state = BEGING_LOADED;
+                        setingLoadFragmentIsShow();
+                    }else if(cass_fragment_state==LOADED){
+                        //判断，如果加载成功的话，就显示当前界面
+                        fragmentShowToHide(fragment_canss);
+                    }else if(cass_fragment_state==FAILED_TO_LOAD){
+                        //最后一种状态，也就是加载失败的话，那么就显示网络异常界面
+                        //这里写显示那个界面的代码....
                     }
-                    fragmentShowToHide(v, fragment_canss);
+
                 }
                 break;
             case R.id.id_btn_dope:
-                if (currentFragment != fragment_message) {
+                if (v != currentClickBtn) {
+                    bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_message == null) {
                         fragment_message = new MessagesFragment();
                         mFTransaction.add(R.id.set_fragment, fragment_message);
                     }
-                    fragmentShowToHide(v, fragment_message);
+                    fragmentShowToHide(fragment_message);
                 }
                 break;
             case R.id.id_btn_release:
-                if (currentFragment != fragment_relese) {
+                bottonBtnClickChangeStyle(v);
+                if (v != currentClickBtn) {
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_relese == null) {
                         fragment_relese = new ReleaseFragment();
                         mFTransaction.add(R.id.set_fragment, fragment_relese);
                     }
-                    fragmentShowToHide(v, fragment_relese);
+                    fragmentShowToHide(fragment_relese);
                 }
                 break;
             case R.id.btn_album:
@@ -155,6 +234,36 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     }
 
 
+    //设置fragment_hg页面的加载操作
+    private void fragment_hgLoad() {
+        mFTransaction = mFManaage.beginTransaction();
+        fragment_hg = new HgFragment();
+        mFTransaction.add(R.id.set_fragment, fragment_hg);
+        currentFragment = fragment_hg;
+        fragmentShowToHide(fragment_hg);
+    }
+
+    //设置加载画面的fragment的显示
+    private void setingLoadFragmentIsShow(){
+        if(ingLoadFragment==null){
+            ingLoadFragment = new IngLoadFragment();
+        }
+        mFTransaction.add(R.id.set_fragment, ingLoadFragment);
+        fragmentShowToHide(ingLoadFragment);
+    }
+
+
+    //设置fragment_canss的加载操作
+    private void fragment_canssLoad() {
+        mFTransaction = mFManaage.beginTransaction();
+        cass_fragment_state = LOADED;
+        fragment_canss = new CassificationFragment(shopClass2);
+        //这里将fragmeent的状态设置成加载完毕的状态
+        mFTransaction.add(R.id.set_fragment, fragment_canss);
+        fragmentShowToHide(fragment_hg);
+    }
+
+
     private void getImage(int i) {
         int code = 0;
         if (i == 1) {
@@ -167,7 +276,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
             code = 1;
         }
         Intent intent = new Intent(this, MReleaseActivity.class);
-        intent.putExtra("intent",code);
+        intent.putExtra("intent", code);
         startActivity(intent);
         hideOption();
     }
@@ -195,12 +304,15 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
         mAnimation.setLayoutAlpha(1000, true, 0f, 1f, layout_select_img_fg);
     }
 
-    private void fragmentShowToHide(View v, Fragment mFragemnt) {
+    private void bottonBtnClickChangeStyle(View v) {
         Button btn = (Button) v;
         resetBtnTextColor();
         btn.setTextColor(0xffff9c00);
         btn.setBackgroundColor(0xfbfbfbf);
         currentClickBtn = btn;
+    }
+
+    private void fragmentShowToHide(Fragment mFragemnt) {
 
         mFTransaction.hide(currentFragment);
         mFTransaction.show(mFragemnt);
@@ -223,7 +335,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
         }
     }
 
-    private void hideOption(){
+    private void hideOption() {
         //            layout_select_img_bs.clearAnimation();
         layout_select_img_fg.clearAnimation();
 //            btn_album.clearAnimation();

@@ -17,6 +17,7 @@ import com.lang.big.biglang.Adapter.CCShopClassAdapter;
 import com.lang.big.biglang.Adapter.HeaderGridAdapter;
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.ShopClass;
+import com.lang.big.biglang.bean.ShopClass2;
 import com.lang.big.biglang.utils.MyAnimation;
 
 import java.util.ArrayList;
@@ -36,10 +37,12 @@ public class CassificationFragment extends Fragment implements AbsListView.OnScr
     private View btn_layout;
 
     private MyAnimation animation;
+    private ShopClass2 mShopClass2;
 
 
-    public CassificationFragment() {
+    public CassificationFragment(ShopClass2 shopClass2) {
         // Required empty public constructor
+        mShopClass2 = shopClass2;
     }
 
 
@@ -59,7 +62,7 @@ public class CassificationFragment extends Fragment implements AbsListView.OnScr
         animation = MyAnimation.getMyAnimation();
         listView.addHeaderView(handView);
         getValues();
-        CCShopClassAdapter ca = new CCShopClassAdapter(getContext(), R.layout.cc_main_list_view_moban, arrayList);
+        CCShopClassAdapter ca = new CCShopClassAdapter(getContext(), R.layout.cc_main_list_view_moban, mShopClass2);
         System.out.println(listView + ":" + ca);
         listView.setAdapter(ca);
         listView.setOnScrollListener(this);

@@ -30,10 +30,10 @@ public class Mrelefrag1ImgGridAdapter extends ArrayAdapter<String>{
         void onClick();
     }
 
-    public Mrelefrag1ImgGridAdapter(Context context, HashSet<String> datas) {
+    public Mrelefrag1ImgGridAdapter(Context context, ArrayList<String> datas) {
         super(context, 0);
         inflater = LayoutInflater.from(context);
-        mDatas.addAll(datas);
+        mDatas = datas;
         mImgBtnLayout = inflater.inflate(R.layout.mrele_frag1_addimg_btn_moban,null);
         ImageButton mImgBtn = (ImageButton)mImgBtnLayout.findViewById(R.id.mrele_frag1_addimg_btn);
 
