@@ -16,6 +16,8 @@ import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.ShopClass;
 import com.lang.big.biglang.bean.ShopClass2;
 import com.lang.big.biglang.bean.ShopData;
+import com.lang.big.biglang.utils.MyOkHttp_util;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,11 +33,13 @@ public class CCShopClassAdapter extends BaseAdapter {
     private ArrayList<String> titles;
     private HashMap<String,ArrayList<String>> items;
     private HashMap<String,String> imgPaths;
+    private View handeView;
 
 
-    public CCShopClassAdapter(Context context, int resource, ShopClass2 shopClass2) {
+    public CCShopClassAdapter(Context context, int resource, ShopClass2 shopClass2,View handeView) {
         this.context = context;
         this.resource = resource;
+        this.handeView = handeView;
         titles = shopClass2.getTitles();
         imgPaths = shopClass2.getImgPath();
         items = shopClass2.getItems();
@@ -59,14 +63,14 @@ public class CCShopClassAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+//        if(position==0){
+//            return handeView;
+//        }
         Hodler mHodler = null;
         int mColor = Color.parseColor("#FE4D2C");
         String title = getItem(position).toString();
-        System.out.println("xml"+title);
         ArrayList<String> versions= items.get(title);
-        System.out.println("xml"+versions);
-        String imgpath = imgPaths.get(title);
-        System.out.println("xml"+imgpath);
+        String imgpath = MyOkHttp_util.ServicePath+imgPaths.get(title);
         if(convertView==null){
             convertView =  LayoutInflater.from(context).inflate(resource,parent,false);
             mHodler = new Hodler();
@@ -84,6 +88,7 @@ public class CCShopClassAdapter extends BaseAdapter {
         }
         mHodler.viewColor.setBackgroundColor(mColor);
         mHodler.className.setText(title);
+        Picasso.with(context).load(imgpath).placeholder(R.drawable.pictures_no).error(R.drawable.imgloaderror).into(mHodler.classImg);
 //        mHodler.introduce.setText(sc.getBiaoti());
         if(versions.size()>4){
             ArrayList<String> arrayList = new ArrayList<>();
@@ -92,7 +97,7 @@ public class CCShopClassAdapter extends BaseAdapter {
             }
             versions = arrayList;
         }
-        System.out.println(imgPaths.get(title));
+        System.out.println("asssdd"+imgpath);
         ArrayAdapter<String> ada = new ArrayAdapter<String>(context,R.layout.cc_listview_item_grid_moban,R.id.cc_grid_item,versions);
         mHodler.mGridView.setAdapter(ada);
         return convertView;

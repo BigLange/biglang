@@ -12,6 +12,7 @@
         android:cacheColorHint="@android:color/transparent"
         android:horizontalSpacing="3dp"
         android:listSelector="@android:color/transparent"
+        android:padding="10dp"
         android:numColumns="3"
         android:stretchMode="columnWidth"
         android:verticalSpacing="3dp"></GridView>

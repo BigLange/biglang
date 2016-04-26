@@ -27,7 +27,7 @@ public class MyOkHttp_util {
     private Handler mHandler;
     private Context context;
     private Gson mGson;
-    public final static String  ServicePath = "http://192.168.155.4:8082/LangTaoSha/";
+    public final static String  ServicePath = "http://192.168.2.101:8082/LangTaoSha/";
 
     private MyOkHttp_util(){
         mOkHttpClient = new OkHttpClient();
@@ -100,6 +100,11 @@ public class MyOkHttp_util {
             fos.write(b,0,len);
         }
         fos.close();
+    }
+
+
+    public void upLoad(){
+
     }
 
 }

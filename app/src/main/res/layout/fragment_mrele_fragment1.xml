@@ -45,10 +45,10 @@
         <Button
             android:id="@+id/mrele_fragment1_next_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:gravity="center"
             android:textColor="#fff"
-            android:background="#dadada"
+            android:background="#FF472d"
             android:text="下一步"/>
         </LinearLayout>
 
@@ -71,6 +71,14 @@
             </ListView>
 
         </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/mrele_frag1_tijiao_roof_layout"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:clickable="true"
+            android:background="#30000000"></RelativeLayout>
 
     </RelativeLayout>
 

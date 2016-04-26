@@ -60,6 +60,7 @@ public class HeaderGridAdapter extends BaseAdapter {
         }else{
             mHodler = (Hodler)convertView.getTag();
         }
+        System.out.println("数据一直在解析！！！");
         mHodler.mImageView.setImageResource(imga);
         mHodler.mImageName.setText(name);
         return convertView;

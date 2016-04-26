@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.charon.pulltorefreshlistview.PullRefreshAndLoadMoreListView;
-import com.charon.pulltorefreshlistview.PullToRefreshListView;
 import com.lang.big.biglang.Adapter.IndexShopFuJinAdapter;
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.ShopData;

@@ -37,7 +37,7 @@ public class ShopClass2 {
 
     private ArrayList<String> titles;
     private HashMap<String, ArrayList<String>> items;
-    private HashMap<String, String> imgPath;
+    private HashMap<String, String> imgPaths;
 
     private final String VERSIONSXMLPATH = "LangTaoSha/Xml";
     private final String VERSIONSXMLNAME = "versions.xml";
@@ -61,7 +61,7 @@ public class ShopClass2 {
                     case 0x110:
                         try {
                             readXml();
-                            mUIHandler.sendEmptyMessage(homepage.LOADED);
+                            sendUIHander(homepage.LOADED, homepage.CASSFRAGMENTLOAD);
 
                         } catch (XmlPullParserException e) {
                             e.printStackTrace();
@@ -72,7 +72,7 @@ public class ShopClass2 {
                     case 0x111:
                         //如果返回的是版本号不一致的消息的话，那么就重新从服务器请求好数据保存到本地
                         titles.clear();
-                        imgPath.clear();
+                        imgPaths.clear();
                         items.clear();
                         requestXml();
                         try {
@@ -88,7 +88,7 @@ public class ShopClass2 {
         };
         titles = new ArrayList<>();
         items = new HashMap<>();
-        imgPath = new HashMap<>();
+        imgPaths = new HashMap<>();
         boolean b = detectionFile();
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Toast.makeText(context, "SD卡未挂载", Toast.LENGTH_SHORT).show();
@@ -119,7 +119,7 @@ public class ShopClass2 {
         MyOkHttp_util.getMyOkHttp().doGetAsyn(MyOkHttp_util.ServicePath + "Versions.do", new MyOkHttp_util.MyHttpCallBack() {
             @Override
             public void doError(Request request, IOException e) {
-                mUIHandler.obtainMessage(homepage.FAILED_TO_LOAD);
+                sendUIHander(homepage.FAILED_TO_LOAD, homepage.CASSFRAGMENTLOAD);
             }
 
             @Override
@@ -128,10 +128,17 @@ public class ShopClass2 {
                 if (!versions.equals(mVersions)) {
                     mHander.sendEmptyMessage(0x111);
                 } else {
-                    mUIHandler.sendEmptyMessage(homepage.LOADED);
+                    sendUIHander(homepage.LOADED,homepage.CASSFRAGMENTLOAD);
                 }
             }
         });
+    }
+
+    private void sendUIHander(int want,int age1){
+        Message msg = Message.obtain();
+        msg.what = want;
+        msg.arg1 = age1;
+        mUIHandler.sendMessage(msg);
     }
 
 
@@ -144,7 +151,7 @@ public class ShopClass2 {
     }
 
     public HashMap<String, String> getImgPath() {
-        return imgPath;
+        return imgPaths;
     }
 
     private boolean detectionFile() {
@@ -164,6 +171,9 @@ public class ShopClass2 {
     public static ShopClass2 getShopClass2(Context context, Handler mUIHandler) {
         if (shopClass2 == null) {
             shopClass2 = new ShopClass2(context, mUIHandler);
+        }else{
+            shopClass2.mUIHandler = mUIHandler;
+            shopClass2.sendUIHander(homepage.LOADED, homepage.CASSFRAGMENTLOAD);
         }
         return shopClass2;
     }
@@ -205,7 +215,7 @@ public class ShopClass2 {
                     } else if ("item".equals(tag)) {
                         arrayList.add(value);
                     } else if ("imgPath".equals(tag)) {
-                        imgPath.put(title, xmlPullParser.getText());
+                        imgPaths.put(title, xmlPullParser.getText());
                     }
                     break;
             }

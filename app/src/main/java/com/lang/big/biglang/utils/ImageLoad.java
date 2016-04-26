@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
@@ -101,6 +102,15 @@ public class ImageLoad implements Runnable{
             }
         }
         return imageLoad;
+    }
+
+
+    public ArrayList<Bitmap> fromPathGetBitmap(ArrayList<String> paths){
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+        for (String path:paths) {
+            bitmaps.add(getBitmapFromLruCache(path));
+        }
+        return bitmaps;
     }
 
     //核心方法，根据给的path来给imageView设置图片

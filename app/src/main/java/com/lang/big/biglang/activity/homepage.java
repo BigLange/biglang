@@ -168,12 +168,10 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.id_btn_hg:
-                mFTransaction = mFManaage.beginTransaction();
                 if(v!=currentClickBtn){
                     bottonBtnClickChangeStyle(v);
-                    if(fragment_hg !=null) {
-                        fragmentShowToHide(fragment_hg);
-                    }
+                    mFTransaction = mFManaage.beginTransaction();
+                    fragmentShowToHide(fragment_hg);
                 }
                 break;
             case R.id.id_btn_classification:
@@ -186,9 +184,10 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                        setingLoadFragmentIsShow();
                     }else if(cass_fragment_state==NO_LOAD){
                         //判断当前页面如果还没有加载过的话就让其数据去进行加载，并且让加载页面显示出来
-                        shopClass2 = ShopClass2.getShopClass2(this,mHandler);
                         cass_fragment_state = BEGING_LOADED;
                         setingLoadFragmentIsShow();
+                        shopClass2 = ShopClass2.getShopClass2(this,mHandler);
+//                        fragment_canssLoad();
                     }else if(cass_fragment_state==LOADED){
                         //判断，如果加载成功的话，就显示当前界面
                         fragmentShowToHide(fragment_canss);
@@ -211,8 +210,8 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.id_btn_release:
-                bottonBtnClickChangeStyle(v);
                 if (v != currentClickBtn) {
+                    bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_relese == null) {
                         fragment_relese = new ReleaseFragment();
@@ -247,8 +246,8 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     private void setingLoadFragmentIsShow(){
         if(ingLoadFragment==null){
             ingLoadFragment = new IngLoadFragment();
+            mFTransaction.add(R.id.set_fragment, ingLoadFragment);
         }
-        mFTransaction.add(R.id.set_fragment, ingLoadFragment);
         fragmentShowToHide(ingLoadFragment);
     }
 
@@ -256,11 +255,11 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     //设置fragment_canss的加载操作
     private void fragment_canssLoad() {
         mFTransaction = mFManaage.beginTransaction();
-        cass_fragment_state = LOADED;
         fragment_canss = new CassificationFragment(shopClass2);
         //这里将fragmeent的状态设置成加载完毕的状态
         mFTransaction.add(R.id.set_fragment, fragment_canss);
-        fragmentShowToHide(fragment_hg);
+        fragmentShowToHide(fragment_canss);
+        cass_fragment_state = LOADED;
     }
 
 

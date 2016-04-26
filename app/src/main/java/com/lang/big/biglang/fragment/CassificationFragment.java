@@ -61,8 +61,8 @@ public class CassificationFragment extends Fragment implements AbsListView.OnScr
         btn_layout = v.findViewById(R.id.cc_select_btn_layout);
         animation = MyAnimation.getMyAnimation();
         listView.addHeaderView(handView);
-        getValues();
-        CCShopClassAdapter ca = new CCShopClassAdapter(getContext(), R.layout.cc_main_list_view_moban, mShopClass2);
+//        getValues();
+        CCShopClassAdapter ca = new CCShopClassAdapter(getContext(), R.layout.cc_main_list_view_moban, mShopClass2,handView);
         System.out.println(listView + ":" + ca);
         listView.setAdapter(ca);
         listView.setOnScrollListener(this);

@@ -31,6 +31,7 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
         Mrelefrag1ImgGridAdapter.OnAddImgBtnClickListener{
 
     private View addImgLayout;
+    private View tiJiaoroof;
     private ListView addImgList;
     private GridView showImgGrid;
     private EditText setShopName;
@@ -44,6 +45,8 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
     private Mrelefrag1ImgGridAdapter m1igada;
 
     private ArrayList<String> mDatas = new ArrayList<>();
+
+    private boolean isTiJiao;
 
 
 
@@ -74,7 +77,7 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
         showImgGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (startImgPreListener!=null){
+                if (startImgPreListener != null) {
                     startImgPreListener.startImgPre(position);
                 }
             }
@@ -85,14 +88,24 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_mrele_fragment1, container, false);
-        mActivity = (MReleaseActivity)getActivity();
+        mActivity = (MReleaseActivity) getActivity();
         intoView(v);
         return v;
     }
 
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        if (!hidden&&isTiJiao){
+            tiJiaoroof.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void intoView(View v) {
         addImgLayout = v.findViewById(R.id.mrele_fragment1_add_img_layout);
+        tiJiaoroof = v.findViewById(R.id.mrele_frag1_tijiao_roof_layout);
         addImgList = (ListView)v.findViewById(R.id.mrele_fragment1_add_img_options);
+        setShopName = (EditText)v.findViewById(R.id.mrele_fragment1_edt_name);
         aAdapter = new ArrayAdapter<String>(getActivity(),R.layout.mrele_addimg_options_item_moban,R.id.addImg_potions_item_txt,addlistoptions);
         addImgList.setAdapter(aAdapter);
         addImgList.setOnItemClickListener(this);
@@ -123,7 +136,7 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
 
     //给予Activity的回调接口
     public interface Frag1ToFrag2Listener{
-        void nextFragment();
+        void nextFragment(String shopName);
     }
 
     private Frag1ToFrag2Listener nextFragment;
@@ -134,8 +147,14 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
 
     @Override
     public void onClick(View v) {
+        String shopName = setShopName.getText().toString();
+        if(!(shopName.length() >0)){
+            Toast.makeText(getActivity(), "先给商品起个名字吧", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(nextFragment!=null){
-            nextFragment.nextFragment();
+            isTiJiao = true;
+            nextFragment.nextFragment(shopName);
         }
     }
     //接口的回调，回调点击拍照的主界面的处理
