@@ -174,6 +174,7 @@ public class MreleFragment3 extends Fragment implements View.OnClickListener {
                     downNextBtnOnClickListener.downNextBtnOnClick(price_int, yuan_price_int, franking_int, "湖南&长沙&雨花");
                 }
                 break;
+
         }
     }
 
