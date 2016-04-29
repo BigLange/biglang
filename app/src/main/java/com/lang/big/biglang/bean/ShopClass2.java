@@ -74,14 +74,8 @@ public class ShopClass2 {
                         titles.clear();
                         imgPaths.clear();
                         items.clear();
+
                         requestXml();
-                        try {
-                            readXml();
-                        } catch (XmlPullParserException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                         break;
                 }
             }

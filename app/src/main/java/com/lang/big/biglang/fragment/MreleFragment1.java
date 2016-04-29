@@ -134,6 +134,10 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
         addImgLayout.setVisibility(View.GONE);
     }
 
+    public boolean getIsTijiao(){
+        return isTiJiao;
+    }
+
     //给予Activity的回调接口
     public interface Frag1ToFrag2Listener{
         void nextFragment(String shopName);
@@ -152,9 +156,13 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
             Toast.makeText(getActivity(), "先给商品起个名字吧", Toast.LENGTH_SHORT).show();
             return;
         }
+        if(shopName.length()>15){
+            Toast.makeText(getActivity(), "商品名字过长了", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(nextFragment!=null){
-            isTiJiao = true;
             nextFragment.nextFragment(shopName);
+            isTiJiao = true;
         }
     }
     //接口的回调，回调点击拍照的主界面的处理
@@ -195,6 +203,7 @@ public class MreleFragment1 extends Fragment implements View.OnClickListener,Ada
         }
         hideAddImgOptions();
     }
+
 
     @Override
     public void onClick() {

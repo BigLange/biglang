@@ -97,7 +97,6 @@ public class CCShopClassAdapter extends BaseAdapter {
             }
             versions = arrayList;
         }
-        System.out.println("asssdd"+imgpath);
         ArrayAdapter<String> ada = new ArrayAdapter<String>(context,R.layout.cc_listview_item_grid_moban,R.id.cc_grid_item,versions);
         mHodler.mGridView.setAdapter(ada);
         return convertView;

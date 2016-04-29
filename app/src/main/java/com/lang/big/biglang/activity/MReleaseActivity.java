@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -18,12 +20,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.fragment.MreleFragment1;
 import com.lang.big.biglang.fragment.MreleFragment2;
 import com.lang.big.biglang.fragment.MreleFragment3;
+import com.lang.big.biglang.utils.ImageLoad;
+import com.lang.big.biglang.utils.MyMapUilts;
+import com.lang.big.biglang.utils.MyOkHttp_util;
 import com.lang.big.biglang.utils.MyThreadPool;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -31,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +58,13 @@ public class MReleaseActivity extends Activity implements Runnable {
     private FragmentManager mFManager;
     private FragmentTransaction mFTransaction;
 
+    //商品发布成功
+    private final int RELEASE_OK = 0x110;
+    //商品发布失败
+    private final int RELEASE_NO = 0x111;
+    //网络出现错误
+    private final int RELEASE_NOT_INTNET = 0x112;
+
     private ArrayList<String> mDirPaths = new ArrayList<>();
 
     private HashSet<String> mShujuhuanchon = new HashSet<>();
@@ -60,6 +79,8 @@ public class MReleaseActivity extends Activity implements Runnable {
     private MreleFragment3 setPiceAndFranking;
 
     private Fragment currentFragment;
+
+    private int cid = -1;
 
 
     //线程池
@@ -83,12 +104,42 @@ public class MReleaseActivity extends Activity implements Runnable {
     public boolean isAddImgstae;
 
     //记录当前选中的商品的特色标签
-    private HashMap<Integer, String> frag2_labels;
+    private HashMap<Integer, String> frag2_labels = new HashMap<>();
+
+    private Handler mHandler;
+
+    private MyMapUilts mMap;
+
+
+    //判断商品数据是否已经提交上去,如果出了错的话，就用这个判断是否需要删除掉服务器中的一些内容
+    private boolean ifDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mrelease);
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case RELEASE_OK:
+                        Toast.makeText(MReleaseActivity.this, "商品发布成功", Toast.LENGTH_SHORT).show();
+                        break;
+                    case RELEASE_NO:
+                        Toast.makeText(MReleaseActivity.this, "商品发布失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case RELEASE_NOT_INTNET:
+                        Toast.makeText(MReleaseActivity.this, "网络异常啦商品发布失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MyMapUilts.GETLOCATION_IS_OK:
+                        setPiceAndFranking.setAreaBtnText(mMap.getLocal());
+                        break;
+                    case MyMapUilts.GETLOCATION_IS_ERROR:
+                        setPiceAndFranking.setAreaBtnText("定位失败");
+                        break;
+                }
+            }
+        };
         initVaues();
         intoView();
         intoFragment();
@@ -149,14 +200,11 @@ public class MReleaseActivity extends Activity implements Runnable {
         addimgFragment.setNextFragment(new MreleFragment1.Frag1ToFrag2Listener() {
             @Override
             public void nextFragment(String shopName) {
-                numberadd();
-                mFTransaction = mFManager.beginTransaction();
-                if (setVersionsAndLabelFragment == null) {
-                    setVersionsAndLabelFragment = new MreleFragment2();
-                    mFTransaction.add(R.id.mrele_frag_layout, setVersionsAndLabelFragment);
-                    setFragment2Callback();
+                if (addimgFragment.getIsTijiao()) {
+                    frag1ToFrag2();
+                    return;
                 }
-                fragmentShowToHided(setVersionsAndLabelFragment);
+                requestServlet(shopName);
             }
         });
 
@@ -174,6 +222,7 @@ public class MReleaseActivity extends Activity implements Runnable {
         });
     }
 
+
     //选择分类界面请求码
     private final static int CLASSFICATIONCODE = 233;
 
@@ -190,9 +239,6 @@ public class MReleaseActivity extends Activity implements Runnable {
             @Override
             public void onItemClick(View view, int position, String shopLabel) {
                 TextView textView = (TextView) view.findViewById(R.id.mrele_frag2_grid_item_btn);
-                if (frag2_labels == null) {
-                    frag2_labels = new HashMap<Integer, String>();
-                }
                 if (frag2_labels.get(position) != null) {
                     textView.setBackgroundColor(Color.WHITE);
                     textView.setTextColor(Color.parseColor("#333333"));
@@ -214,16 +260,16 @@ public class MReleaseActivity extends Activity implements Runnable {
         setVersionsAndLabelFragment.setDownNextBtnOnClickListener(new MreleFragment2.DownNextBtnOnClickListener() {
             @Override
             public void downNextBtnOnClick(EditText mDescribeEdt) {
-                if(classtitle==null&&classification==null){
+                if (classtitle == null && classification == null) {
                     Toast.makeText(MReleaseActivity.this, "给宝贝分好类吧...", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(frag2_labels.size()<1){
+                if (frag2_labels.size() < 1) {
                     Toast.makeText(MReleaseActivity.this, "给宝贝来几个标签吧...", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mDiscribe = mDescribeEdt.getText().toString();
-                if(mDiscribe.length()<1){
+                if (mDiscribe.length() < 1) {
                     Toast.makeText(MReleaseActivity.this, "描述一下自己的宝贝吧...", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -234,6 +280,7 @@ public class MReleaseActivity extends Activity implements Runnable {
                     setFragment3Callback();
                 }
                 numberadd();
+                mMap = new MyMapUilts(MReleaseActivity.this, mHandler);
                 fragmentShowToHided(setPiceAndFranking);
             }
         });
@@ -247,6 +294,76 @@ public class MReleaseActivity extends Activity implements Runnable {
                 frag3Tofrag2();
             }
         });
+
+        setPiceAndFranking.setDownNextBtnOnClickListener(new MreleFragment3.DownNextBtnOnClickListener() {
+            @Override
+            public void downNextBtnOnClick(int price, int yuan_price, int fragking, String area) {
+                release(price, yuan_price, fragking, area);
+            }
+        });
+
+        setPiceAndFranking.setAreaSelectBtnClickListener(new MreleFragment3.AreaSelectBtnClickListener() {
+            @Override
+            public void areaSelectBtnClick() {
+                Intent intent = new Intent(MReleaseActivity.this,AreasSelectActivity.class);
+                startActivityForResult(intent,AreasSelectActivity.AREAREQUESTCODE);
+            }
+        });
+    }
+
+    /**
+     * 提交最后的数据到服务器上面去
+     *
+     * @param price      商品价格
+     * @param yuan_price 商品原价格
+     * @param fragking   邮费
+     * @param area       商品所在地区
+     */
+    private void release(int price, int yuan_price, int fragking, String area) {
+        String sort = classtitle + "&" + classification;
+        StringBuilder labelSb = new StringBuilder();
+        for (int key : frag2_labels.keySet()) {
+            labelSb.append(frag2_labels.get(key) + "&");
+        }
+        labelSb.delete(labelSb.length() - 1, labelSb.length());
+        String label = labelSb.toString();
+
+        HashMap<String, Object> mMap = new HashMap<>();
+        mMap.put("cid", cid);
+        mMap.put("price", price);
+        mMap.put("cost", yuan_price);
+        mMap.put("referral", mDiscribe);
+        mMap.put("sort", sort);
+        mMap.put("area", area);
+        mMap.put("franking", fragking);
+        mMap.put("label", label);
+        MyOkHttp_util.getMyOkHttp().doPost(MyOkHttp_util.ServicePath + "ShopElseMsg.do", mMap, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                mHandler.sendEmptyMessage(RELEASE_NOT_INTNET);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String responsCode = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(responsCode);
+                    int StateCode = jsonObject.getInt("stateCode");
+                    if (StateCode == 200) {
+                        mHandler.sendEmptyMessage(RELEASE_OK);
+                    } else {
+                        mHandler.sendEmptyMessage(RELEASE_NO);
+                        if (cid != -1) {
+                            ifDelete = true;
+                            deleteCommImg();
+                        }
+                    }
+                    MReleaseActivity.this.finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 
@@ -255,7 +372,7 @@ public class MReleaseActivity extends Activity implements Runnable {
         pool.submit(this);
     }
 
-    private void numberCut(){
+    private void numberCut() {
         current = 100;
         System.out.println("heiheiheihei:" + number);
         pool.submit(new Runnable() {
@@ -285,6 +402,72 @@ public class MReleaseActivity extends Activity implements Runnable {
                 number--;
             }
         });
+    }
+
+    //第一次上传图片到服务器
+    private void requestServlet(String shopName) {
+        final ArrayList<Bitmap> mBitmaps = ImageLoad.getImageLoad().fromPathGetBitmap(mDirPaths);
+        HashMap<String, Object> mMap = new HashMap<>();
+        mMap.put("userId", 57);
+        mMap.put("shopName", shopName);
+        final MyOkHttp_util myOkHttp_util = MyOkHttp_util.getMyOkHttp();
+        myOkHttp_util.upLoadComm(MyOkHttp_util.ServicePath + "ReleaseName.do", mMap, mBitmaps, new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                mHandler.sendEmptyMessage(RELEASE_NOT_INTNET);
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                String responseJson = response.body().string();
+                try {
+                    JSONObject jsonObject = new JSONObject(responseJson);
+                    int stateCode = jsonObject.getInt("stateCode");
+                    if (stateCode == 200) {
+                        //判断如果文件名和图片上传成功的话，那就进入到下一个页面
+
+                        System.out.println("文件上传成功了！");
+                        cid = jsonObject.getInt("cid");
+                        myOkHttp_util.upLoadImg(MyOkHttp_util.ServicePath + "ReleaseImg.do", mBitmaps, cid + "");
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                frag1ToFrag2();
+                            }
+                        });
+                    } else if (stateCode == 300) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MReleaseActivity.this, "已经发布过该名称的商品啦，换个名称吧。", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MReleaseActivity.this, "商品的发布出错啦....", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+
+    private void frag1ToFrag2() {
+        numberadd();
+        mFTransaction = mFManager.beginTransaction();
+        if (setVersionsAndLabelFragment == null) {
+            setVersionsAndLabelFragment = new MreleFragment2();
+            mFTransaction.add(R.id.mrele_frag_layout, setVersionsAndLabelFragment);
+            setFragment2Callback();
+        }
+        fragmentShowToHided(setVersionsAndLabelFragment);
     }
 
 
@@ -335,7 +518,7 @@ public class MReleaseActivity extends Activity implements Runnable {
             frag3Tofrag2();
             return;
         }
-        if(currentFragment==setVersionsAndLabelFragment){
+        if (currentFragment == setVersionsAndLabelFragment) {
             frag2ToFrag1();
             return;
         }
@@ -343,8 +526,27 @@ public class MReleaseActivity extends Activity implements Runnable {
             addimgFragment.hideAddImgOptions();
             isAddImgstae = false;
         } else {
+            if (cid != -1) {
+                deleteCommImg();
+            }
             super.onBackPressed();
         }
+    }
+
+    //用于退出这个Acitvity的时候删除上传的图片
+    private void deleteCommImg() {
+        String url = MyOkHttp_util.ServicePath + "DeleteShopImg.do?cid=" + cid;
+        if(ifDelete)
+            url +="&tag=tag";
+        MyOkHttp_util.getMyOkHttp().doGetAsyn(url, new MyOkHttp_util.MyHttpCallBack() {
+            @Override
+            public void doError(Request request, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+            }
+        });
     }
 
     @Override
@@ -394,6 +596,10 @@ public class MReleaseActivity extends Activity implements Runnable {
                 classification = data.getStringExtra("class");
                 classtitle = data.getStringExtra("title");
                 setVersionsAndLabelFragment.setClassBtnText(classification);
+            }else if(requestCode == AreasSelectActivity.AREAREQUESTCODE){
+                String city = data.getStringExtra("city");
+                String district = data.getStringExtra("district");
+                setPiceAndFranking.setAreaBtnText(city+"&"+district);
             }
         }
     }
@@ -426,6 +632,5 @@ public class MReleaseActivity extends Activity implements Runnable {
         mDirPaths.add(imgFile.getAbsolutePath());
         mShujuhuanchon.add(imgFile.getAbsolutePath());
     }
-
 
 }
