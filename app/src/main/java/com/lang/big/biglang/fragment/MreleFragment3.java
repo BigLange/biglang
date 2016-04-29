@@ -177,7 +177,6 @@ public class MreleFragment3 extends Fragment implements View.OnClickListener {
 
         }
     }
-
     public void setAreaBtnText(String area){
         area_btn.setText(area);
         this.area = area;
