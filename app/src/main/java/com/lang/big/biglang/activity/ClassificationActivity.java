@@ -1,12 +1,10 @@
 package com.lang.big.biglang.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,18 +12,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.lang.big.biglang.R;
-import com.lang.big.biglang.bean.ShopClass2;
+import com.lang.big.biglang.bean.ShopClass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.jar.Attributes;
 
 public class ClassificationActivity extends Activity implements AdapterView.OnItemClickListener{
 
     private ListView titleListView;
     private ListView optionListView;
 
-    private ShopClass2 mClass;
+    private ShopClass mClass;
 
     private Handler mUiHandler;
 
@@ -56,7 +53,7 @@ public class ClassificationActivity extends Activity implements AdapterView.OnIt
                initAdapter();
             }
         };
-        mClass = ShopClass2.getShopClass2(this,mUiHandler);
+        mClass = ShopClass.getShopClass2(this, mUiHandler);
     }
 
     private void initView() {

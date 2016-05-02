@@ -11,17 +11,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lang.big.biglang.MyView.CircleView;
 import com.lang.big.biglang.R;
 import com.lang.big.biglang.bean.ShopClass;
-import com.lang.big.biglang.bean.ShopClass2;
-import com.lang.big.biglang.bean.ShopData;
 import com.lang.big.biglang.utils.MyOkHttp_util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/13.
@@ -36,7 +32,7 @@ public class CCShopClassAdapter extends BaseAdapter {
     private View handeView;
 
 
-    public CCShopClassAdapter(Context context, int resource, ShopClass2 shopClass2,View handeView) {
+    public CCShopClassAdapter(Context context, int resource, ShopClass shopClass2,View handeView) {
         this.context = context;
         this.resource = resource;
         this.handeView = handeView;

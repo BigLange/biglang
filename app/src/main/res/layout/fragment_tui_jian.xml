@@ -3,11 +3,11 @@
     android:layout_height="match_parent"
     tools:context="com.lang.big.biglang.fragment.TuiJianFragment">
 
-    <com.charon.pulltorefreshlistview.PullToRefreshListView
+    <com.charon.pulltorefreshlistview.PullRefreshAndLoadMoreListView
         android:id="@+id/index_list_shop_show"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:dividerHeight="15dp"
         android:divider="#EEE"
-        ></com.charon.pulltorefreshlistview.PullToRefreshListView>
+        ></com.charon.pulltorefreshlistview.PullRefreshAndLoadMoreListView>
 </FrameLayout>

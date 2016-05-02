@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.charon.pulltorefreshlistview.PullRefreshAndLoadMoreListView;
 import com.lang.big.biglang.Adapter.IndexShopFuJinAdapter;
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.bean.Commodity;
 import com.lang.big.biglang.bean.ShopData;
 
 import java.util.ArrayList;
@@ -21,10 +22,12 @@ import java.util.List;
  */
 public class FuJinFragment extends Fragment implements PullRefreshAndLoadMoreListView.OnLoadMoreListener{
     private PullRefreshAndLoadMoreListView listView;
-    private List<ShopData> arrlist = new ArrayList<>();
+//    private List<ShopData> arrlist = new ArrayList<>();
+    private ArrayList<Commodity> comms;
 
-    public FuJinFragment() {
+    public FuJinFragment(ArrayList<Commodity> comms) {
         // Required empty public constructor
+        this.comms = comms;
     }
 
 
@@ -38,23 +41,23 @@ public class FuJinFragment extends Fragment implements PullRefreshAndLoadMoreLis
 
     private void intoView(View v) {
         listView = (PullRefreshAndLoadMoreListView)v.findViewById(R.id.index_shopfujin_list);
-        getContent();
-        IndexShopFuJinAdapter indexShopFuJinAdapter = new IndexShopFuJinAdapter(getContext(),R.layout.index_shopfujin_show_moban,arrlist);
+//        getContent();
+        IndexShopFuJinAdapter indexShopFuJinAdapter = new IndexShopFuJinAdapter(getContext(),R.layout.index_shopfujin_show_moban,comms);
         listView.setAdapter(indexShopFuJinAdapter);
         //设置上啦刷新
         listView.setOnLoadMoreListener(this);
     }
 
-    private void getContent() {
-        ShopData shopData = new ShopData("海盗船键盘",null,500,"长沙|雨花","这个键盘到底是有多屌？",2,1,null);
-        ShopData shopData2 = new ShopData("海盗船K70",null,700,"长沙|望城","这个歌键盘不是RGB的，简陋的别来",9,2,null);
-        ShopData shopData3 = new ShopData("海盗船K70",null,700,"长沙|望城","这个歌键盘不是RGB的，简陋的别来",9,2,null);
-        arrlist.add(shopData);
-        arrlist.add(shopData2);
-        arrlist.add(shopData3);
-        arrlist.add(shopData3);
-        arrlist.add(shopData3);
-    }
+//    private void getContent() {
+//        ShopData shopData = new ShopData("海盗船键盘",null,500,"长沙|雨花","这个键盘到底是有多屌？",2,1,null);
+//        ShopData shopData2 = new ShopData("海盗船K70",null,700,"长沙|望城","这个歌键盘不是RGB的，简陋的别来",9,2,null);
+//        ShopData shopData3 = new ShopData("海盗船K70",null,700,"长沙|望城","这个歌键盘不是RGB的，简陋的别来",9,2,null);
+//        arrlist.add(shopData);
+//        arrlist.add(shopData2);
+//        arrlist.add(shopData3);
+//        arrlist.add(shopData3);
+//        arrlist.add(shopData3);
+//    }
 
 
     @Override
@@ -75,9 +78,9 @@ public class FuJinFragment extends Fragment implements PullRefreshAndLoadMoreLis
 
             @Override
             protected void onPostExecute(Void aVoid) {
-                ShopData shopData3 = new ShopData("自装发烧级主机",null,5000,"长沙|望城","i74790k的U，970显卡",9,2,null);
-                arrlist.add(shopData3);
-                //请求处理完成，调用PullToRefreshListView隐藏掉顶部的刷新的样式
+//                ShopData shopData3 = new ShopData("自装发烧级主机",null,5000,"长沙|望城","i74790k的U，970显卡",9,2,null);
+//                arrlist.add(shopData3);
+//                //请求处理完成，调用PullToRefreshListView隐藏掉顶部的刷新的样式
                 listView.onLoadMoreComplete();
             }
         }.execute();

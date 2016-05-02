@@ -10,20 +10,24 @@ import android.widget.TextView;
 
 import com.lang.big.biglang.MyView.CircleView;
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.bean.Commodity;
 import com.lang.big.biglang.bean.ShopData;
+import com.lang.big.biglang.utils.MyOkHttp_util;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/13.
  */
-public class IndexShopFuJinAdapter extends ArrayAdapter<ShopData>{
+public class IndexShopFuJinAdapter extends ArrayAdapter<Commodity>{
 
     private Context context;
     private int resource;
 
 
-    public IndexShopFuJinAdapter(Context context, int resource, List<ShopData> lists) {
+    public IndexShopFuJinAdapter(Context context, int resource, ArrayList<Commodity> lists) {
         super(context, resource, lists);
         this.context = context;
         this.resource = resource;
@@ -33,7 +37,7 @@ public class IndexShopFuJinAdapter extends ArrayAdapter<ShopData>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Hodler mHodler = null;
-        ShopData shopData= getItem(position);
+        Commodity comm= getItem(position);
         if(convertView==null){
             convertView =  LayoutInflater.from(context).inflate(resource,parent,false);
             mHodler = new Hodler();
@@ -48,9 +52,14 @@ public class IndexShopFuJinAdapter extends ArrayAdapter<ShopData>{
         }else{
             mHodler = (Hodler)convertView.getTag();
         }
-        mHodler.price.setText(shopData.getPrice()+"");
-        mHodler.introduce.setText(shopData.getIntroduce());
-        mHodler.address.setText(shopData.getAddress());
+        mHodler.price.setText(comm.getCommPRICE()+"");
+        mHodler.introduce.setText(comm.getDescribe());
+        mHodler.address.setText(comm.getCommArea());
+        String[] imgPaths = comm.getImgPaths();
+        String url = MyOkHttp_util.ServicePath+"Myimg/"+comm.getCommId()+"/"+imgPaths[0];
+        Picasso.with(context).load(url).placeholder(R.drawable.pictures_no).error(R.drawable.imgloaderror).into(mHodler.sp_img_1);
+        mHodler.YuanJia.setText(comm.getCommCOST() + "");
+        mHodler.userName.setText(comm.getUser().getUserName());
         return convertView;
     }
 

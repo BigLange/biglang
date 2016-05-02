@@ -82,4 +82,14 @@ public class CircleView extends ImageView {
             src = bitmap;
         }
     }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        src = bm;
+    }
+
+    @Override
+    public void setImageResource(int resId) {
+        src = BitmapFactory.decodeResource(getResources(),resId);
+    }
 }

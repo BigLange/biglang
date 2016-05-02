@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.lang.big.biglang.activity.CommShowActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="#fff">
+
+        <ImageButton
+            android:id="@+id/comm_show_head_up_img_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:background="#0000"
+            android:src="@drawable/down_next" />
+
+        <ImageButton
+            android:id="@+id/comm_show_head_weixin_img_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="#00ff00" />
+
+        <ImageButton
+            android:id="@+id/comm_show_head_kongjian_img_btn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toStartOf="@+id/comm_show_head_weixin_img_btn"
+            android:background="#00ff00" />
+
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v4.view.ViewPager
+            android:id="@+id/comm_show_center_viewPagr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:background="@drawable/hg_bot_top_solid">
+
+            <LinearLayout
+                android:id="@+id/comm_show_botton_xiangyao_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/comm_show_botton_xiangyao_img"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#0000"/>
+                <TextView
+                    android:id="@+id/comm_show_botton_xiangyao_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="28人想要"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/comm_show_botton_lianxi_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginLeft="1dp"
+                android:background="@drawable/comm_show_botton_btn_styles">
+                <ImageButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="#0000"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="联系卖家"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/comm_show_botton_buy"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="#FE4D2C"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:text="马上买"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

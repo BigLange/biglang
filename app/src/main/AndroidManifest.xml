@@ -32,7 +32,7 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="UG39ogWlOoxCjDSmcZNcZFjlKaGk3GQj" />
 
-        <activity android:name=".activity.MainActivity" >
+        <activity android:name=".activity.CommShowActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -62,8 +62,11 @@
             android:process=":remote" >
         </service>
 
-        <activity android:name=".activity.AreasSelectActivity"
-            android:theme="@style/Theme.AppCompat.Dialog">
+        <activity
+            android:name=".activity.AreasSelectActivity"
+            android:theme="@style/Theme.AppCompat.Dialog" >
+        </activity>
+        <activity android:name=".activity.MainActivity" >
         </activity>
     </application>
 

@@ -33,7 +33,6 @@ public class MreleFragment3 extends Fragment implements View.OnClickListener {
     private Button up_next;
     private Button down_next;
     private boolean isBagFranking;
-
     private String area;
 
 
