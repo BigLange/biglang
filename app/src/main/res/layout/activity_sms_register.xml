@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:background="#ff0000"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/img_back"
+            android:layout_gravity="center"
+            android:onClick="back"
+            android:id="@+id/img_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="71dp"
+            android:layout_gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:text="使用手机号码注册"
+            android:id="@+id/textView18" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入您的手机号"
+            android:id="@+id/edt_inputTel"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取验证码"
+            android:onClick="getVerify"
+            android:id="@+id/btn_getVerifyCode" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="验证码"
+            android:id="@+id/edt_verifyCode"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+
+
+
+
+    <Button
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff0000"
+        android:text="继续"
+        android:textSize="20dp"
+        android:textColor="#ffffff"
+        android:id="@+id/btn_next"
+        android:onClick="next"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+</LinearLayout>

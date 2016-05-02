@@ -1,15 +1,25 @@
 package com.lang.big.biglang.fragment;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lang.big.biglang.R;
+import com.lang.big.biglang.activity.PersonalMangerActivity;
+import com.lang.big.biglang.activity.SettingActivity;
+import com.lang.big.biglang.utils.Util_TitleAndBack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +27,11 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ReleaseFragment extends Fragment {
+public class ReleaseFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     ListView listView;
+    TextView util_right;
+    ImageView util_back;
     View head;
     ArrayList<HashMap<String,Object>> mValues = new ArrayList<>();
     String[] option = new String[]{"我发布的","我卖出的","我买到的",
@@ -30,7 +42,9 @@ public class ReleaseFragment extends Fragment {
             R.drawable.hongbao,R.drawable.bangzhu};
 
     SimpleAdapter sa;
-
+    LinearLayout LL_personExhibit;
+    Intent it;
+    Util_TitleAndBack util_releaseTitle;
 
     public ReleaseFragment() {
         // Required empty public constructor
@@ -43,7 +57,7 @@ public class ReleaseFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_release, container, false);
         getHead(inflater);
-        setListView(v);
+        initView(v);
         return v;
     }
 
@@ -53,14 +67,29 @@ public class ReleaseFragment extends Fragment {
     }
 
 
-    private void setListView(View v) {
+    private void initView(View v) {
         listView = (ListView)v.findViewById(R.id.rele_mian_listView);
-        listView.addHeaderView(head);
+        util_right= (TextView) v.findViewById(R.id.util_right);
+        util_back= (ImageView) v.findViewById(R.id.util_back);
+        listView.addHeaderView(head);//加载头布局
         getValues();
         String[] from = new String[]{"img","option","number"};
         int[] to = new int[]{R.id.rele_list_item_img,R.id.rele_list_item_option,R.id.rele_list_item_number};
         sa = new SimpleAdapter(getContext(),mValues,R.layout.rele_list_item_moban,from,to);
         listView.setAdapter(sa);
+        listView.setOnItemClickListener(this);
+
+        LL_personExhibit= (LinearLayout)v.findViewById(R.id.LL_personExhibit);
+        LL_personExhibit.setOnClickListener(this);
+        util_right.setOnClickListener(this);
+        util_back.setOnClickListener(this);
+
+
+        util_releaseTitle= (Util_TitleAndBack)v.findViewById(R.id.util_releaseTitle);
+        util_releaseTitle.backVisibility(View.INVISIBLE);
+        util_releaseTitle.setTitle("我的");
+        util_releaseTitle.settingText("设置");
+        util_releaseTitle.setbackListener(this);
     }
 
     private void getValues() {
@@ -79,4 +108,26 @@ public class ReleaseFragment extends Fragment {
          mMap.put("number",number);
          sa.notifyDataSetChanged();
      }
+
+    @Override
+    public void onClick(View v) {
+         switch (v.getId()){
+             case R.id.util_back:
+                 getActivity().finish();
+                 break;
+             case R.id.LL_personExhibit:
+                  it=new Intent(getActivity(),PersonalMangerActivity.class);
+                 startActivity(it);
+                 break;
+             case R.id.util_right:
+                 it=new Intent(getActivity(),SettingActivity.class);
+                 startActivity(it);
+                 break;
+         }
+        }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(getContext(), "点击的是:"+position, Toast.LENGTH_SHORT).show();
+    }
 }

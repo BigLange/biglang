@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'biglang'
             keyPassword 'android'
-            storeFile file('D:/android/biglang/biglang.jks')
+            storeFile file('E:/AndroidStudioProjects/biglang/biglang.jks')
             storePassword 'android'
         }
     }
@@ -44,4 +44,5 @@ dependencies {
     compile files('libs/gson-2.2.2.jar')
     compile files('src/main/java/libs/picasso-2.5.2.jar')
     compile files('src/main/java/libs/locSDK_6.13.jar')
+    compile files('src/main/java/libs/BmobSMS_V1.0.1_20150710.jar')
 }

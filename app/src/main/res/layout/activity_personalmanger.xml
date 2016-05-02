@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:weightSum="1"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:background="#ff9900"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.1"
+        >
+
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/imv_back"
+            android:src="@drawable/img_back"
+            android:layout_marginLeft="20dp"
+            android:layout_alignTop="@+id/imv_edit"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/imv_edit"
+            android:src="@drawable/img_edit"
+            android:layout_marginRight="20dp"
+            android:layout_alignTop="@+id/imv_share"
+            android:layout_toStartOf="@+id/imv_share" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/imv_share"
+            android:src="@drawable/img_share"
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lv_personalcondition"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.9"/>
+
+</LinearLayout>

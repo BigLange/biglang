@@ -10,32 +10,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <RelativeLayout
+        <com.lang.big.biglang.utils.Util_TitleAndBack
+            android:id="@+id/util_releaseTitle"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="#fff">
+            android:background="#fff"
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="我的"
-                android:textColor="#000"
-                android:textSize="25sp" />
-
-            <TextView
-                android:id="@+id/rele_head_set"
-                android:text="设置"
-                android:textColor="#000"
-                android:gravity="center"
-                android:layout_marginRight="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"/>
-
-        </RelativeLayout>
+        </com.lang.big.biglang.utils.Util_TitleAndBack>
 
         <ListView
             android:id="@+id/rele_mian_listView"

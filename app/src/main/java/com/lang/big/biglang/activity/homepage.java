@@ -1,9 +1,12 @@
 package com.lang.big.biglang.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -11,17 +14,22 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.lang.big.biglang.R;
-import com.lang.big.biglang.bean.ShopClass;
+import com.lang.big.biglang.bean.ShopClass2;
 import com.lang.big.biglang.fragment.CassificationFragment;
 import com.lang.big.biglang.fragment.HgFragment;
 import com.lang.big.biglang.fragment.IngLoadFragment;
 import com.lang.big.biglang.fragment.MessagesFragment;
 import com.lang.big.biglang.fragment.ReleaseFragment;
-import com.lang.big.biglang.fragment.TuiJianFragment;
 import com.lang.big.biglang.utils.MyAnimation;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class homepage extends FragmentActivity implements View.OnClickListener {
 
@@ -43,13 +51,10 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     public final static int NO_LOAD = 109;
 
     //代表着正在加载商品分类的fragment的代码
-    public final static int CASSFRAGMENTLOAD = 1111;
-    //...
     public final static int MSGFRAGMENTLOAD = 1112;
+    //...
+    public final static int CASSFRAGMENTLOAD = 1111;
     public final static int RELEFRAGMENTLOAD = 1113;
-
-    //进入到商品详情界面的返回码
-    private static final int COMMSHOWRESULTCODE = 9527;
 
 
     private Button currentClickBtn;
@@ -71,11 +76,8 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     //第四个用户个人信息的fragment状态
     private int rele_fragment_state = NO_LOAD;
 
-    //代表当前正在加载的页面对应的编号
-    private int currentFragmentNumber;
 
-
-    private ShopClass shopClass2;
+    private ShopClass2 shopClass2;
 
 
     private Fragment currentFragment;
@@ -88,9 +90,9 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == LOADED) {
+            if(msg.what==LOADED){
                 //判断，返回来的是数据加载完毕
-                switch (msg.arg1) {
+                switch (msg.arg1){
                     case CASSFRAGMENTLOAD:
                         //如果当前是商品分类的fragment加载完成了的话，就进行对应的操作
                         fragment_canssLoad();
@@ -102,11 +104,11 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                         break;
                 }
 
-            } else if (msg.what == FAILED_TO_LOAD) {
+            }else if(msg.what==FAILED_TO_LOAD){
                 //或者是数据加载异常
-                switch (msg.arg1) {
+                switch (msg.arg1){
                     case CASSFRAGMENTLOAD:
-                        Toast.makeText(homepage.this, "网络请求出错,加载失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(homepage.this, "出异常啦", Toast.LENGTH_SHORT).show();
                         break;
                     case MSGFRAGMENTLOAD:
                         //...
@@ -166,7 +168,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.id_btn_hg:
-                if (v != currentClickBtn) {
+                if(v!=currentClickBtn){
                     bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
                     fragmentShowToHide(fragment_hg);
@@ -174,23 +176,22 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                 break;
             case R.id.id_btn_classification:
                 if (v != currentClickBtn) {
-                    currentFragmentNumber = CASSFRAGMENTLOAD;
                     //判断如果按的按钮没有重复的话，那么就进行切换的操作
                     bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
-                    if (cass_fragment_state == BEGING_LOADED) {
+                    if(cass_fragment_state==BEGING_LOADED){
                         //判断如果现在fragment的状态属于属于正在加载的话
-                        setingLoadFragmentIsShow();
-                    } else if (cass_fragment_state == NO_LOAD) {
+                       setingLoadFragmentIsShow();
+                    }else if(cass_fragment_state==NO_LOAD){
                         //判断当前页面如果还没有加载过的话就让其数据去进行加载，并且让加载页面显示出来
                         cass_fragment_state = BEGING_LOADED;
                         setingLoadFragmentIsShow();
-                        shopClass2 = ShopClass.getShopClass2(this, mHandler);
+                        shopClass2 = ShopClass2.getShopClass2(this,mHandler);
 //                        fragment_canssLoad();
-                    } else if (cass_fragment_state == LOADED) {
+                    }else if(cass_fragment_state==LOADED){
                         //判断，如果加载成功的话，就显示当前界面
                         fragmentShowToHide(fragment_canss);
-                    } else if (cass_fragment_state == FAILED_TO_LOAD) {
+                    }else if(cass_fragment_state==FAILED_TO_LOAD){
                         //最后一种状态，也就是加载失败的话，那么就显示网络异常界面
                         //这里写显示那个界面的代码....
                     }
@@ -199,7 +200,6 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                 break;
             case R.id.id_btn_dope:
                 if (v != currentClickBtn) {
-                    currentFragmentNumber = MSGFRAGMENTLOAD;
                     bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_message == null) {
@@ -211,7 +211,6 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
                 break;
             case R.id.id_btn_release:
                 if (v != currentClickBtn) {
-                    currentFragmentNumber = MSGFRAGMENTLOAD;
                     bottonBtnClickChangeStyle(v);
                     mFTransaction = mFManaage.beginTransaction();
                     if (fragment_relese == null) {
@@ -237,20 +236,15 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
     //设置fragment_hg页面的加载操作
     private void fragment_hgLoad() {
         mFTransaction = mFManaage.beginTransaction();
-        fragment_hg = new HgFragment(new TuiJianFragment.TuiJianListItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-
-            }
-        });
+        fragment_hg = new HgFragment();
         mFTransaction.add(R.id.set_fragment, fragment_hg);
         currentFragment = fragment_hg;
         fragmentShowToHide(fragment_hg);
     }
 
     //设置加载画面的fragment的显示
-    private void setingLoadFragmentIsShow() {
-        if (ingLoadFragment == null) {
+    private void setingLoadFragmentIsShow(){
+        if(ingLoadFragment==null){
             ingLoadFragment = new IngLoadFragment();
             mFTransaction.add(R.id.set_fragment, ingLoadFragment);
         }
@@ -264,12 +258,7 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
         fragment_canss = new CassificationFragment(shopClass2);
         //这里将fragmeent的状态设置成加载完毕的状态
         mFTransaction.add(R.id.set_fragment, fragment_canss);
-        if(currentFragmentNumber==CASSFRAGMENTLOAD) {
-            fragmentShowToHide(fragment_canss);
-        }else{
-            mFTransaction.hide(fragment_canss);
-            mFTransaction.commit();
-        }
+        fragmentShowToHide(fragment_canss);
         cass_fragment_state = LOADED;
     }
 
@@ -353,10 +342,5 @@ public class homepage extends FragmentActivity implements View.OnClickListener {
         layout_select_img_fg.setVisibility(View.GONE);
 //            Toast.makeText(homepage.this,(layout_select_img_fg.getVisibility()==View.GONE)+"", Toast.LENGTH_SHORT).show();
         isSelectImg = false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
